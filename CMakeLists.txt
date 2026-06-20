@@ -5,7 +5,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(echo_core STATIC
+add_library(echo_core STATIC
     src/echo_server.cpp
     src/file_descriptor.cpp
     src/tcp_listener.cpp
