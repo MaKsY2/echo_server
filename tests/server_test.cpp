@@ -144,7 +144,7 @@ TEST_F(ServerFixture, HandlesClientDisconnect) {
   EXPECT_EQ(c2.recv_exact(5), "alive");
 }
 
-TEST_F(ServerFixture, DISABLED_HandlesTwoClientsConcurrently) {
+TEST_F(ServerFixture, HandlesTwoClientsConcurrently) {
   TestClient c1(port_);
   TestClient c2(port_);
 
