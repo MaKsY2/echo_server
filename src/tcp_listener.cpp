@@ -36,10 +36,16 @@ TcpListener::TcpListener(uint16_t port, int backlog) {
   fd_ = std::move(sock);
 }
 
+void TcpListener::shutdown() noexcept { ::shutdown(fd_.get(), SHUT_RDWR); }
+
 TcpConnection TcpListener::accept() {
-  int client = ::accept(fd_.get(), nullptr, nullptr);
-  if (client < 0)
+  while (true) {
+    int client = ::accept(fd_.get(), nullptr, nullptr);
+    if (client >= 0)
+      return TcpConnection{FileDescriptor{client}};
+    if (errno == EINTR)
+      continue;
     throw_errno("accept");
-  return TcpConnection{FileDescriptor{client}};
+  }
 }
 } // namespace epoll

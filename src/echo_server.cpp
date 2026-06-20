@@ -29,7 +29,10 @@ void EchoServer::run() {
   }
 }
 
-void EchoServer::stop() noexcept { stop_.store(true); }
+void EchoServer::stop() noexcept {
+  stop_.store(true);
+  listener_.shutdown();
+}
 
 void EchoServer::handle(TcpConnection &conn) {
   std::array<std::byte, 4096> buf{};

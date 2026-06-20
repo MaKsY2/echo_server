@@ -12,5 +12,6 @@ class TcpListener {
 public:
   explicit TcpListener(uint16_t port, int backlog = 128);
   TcpConnection accept();
+  void shutdown() noexcept;
 };
 } // namespace epoll
