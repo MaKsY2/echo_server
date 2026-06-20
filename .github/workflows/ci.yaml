@@ -36,9 +36,6 @@ jobs:
       - name: Build
         run: cmake --build build
 
-      - name: List tests
-        run: ./build/tests/echo_tests --gtest_list_tests
-
       - name: Test
         working-directory: build
-        run: ctest --output-on-failure -V
+        run: ctest --output-on-failure

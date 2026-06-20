@@ -1,1 +1,1 @@
-![CI](https://github.com/MaKsY2/echo_server/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/MaKsY2/echo_server/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/MaKsY2/echo_server/actions/workflows/ci.yaml)
