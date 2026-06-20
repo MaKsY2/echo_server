@@ -1,0 +1,3 @@
+/Users/shvydkiy/Documents/Code/cpp-high-perf/build/CMakeFiles/echo_server.dir
+/Users/shvydkiy/Documents/Code/cpp-high-perf/build/CMakeFiles/edit_cache.dir
+/Users/shvydkiy/Documents/Code/cpp-high-perf/build/CMakeFiles/rebuild_cache.dir
