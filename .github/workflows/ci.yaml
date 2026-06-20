@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     name: ${{ matrix.compiler.cxx }} / ${{ matrix.build_type }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -45,7 +45,7 @@ jobs:
         run: ctest --output-on-failure
 
   sanitizers:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y cmake ninja-build
@@ -55,7 +55,7 @@ jobs:
         run: ctest --output-on-failure
 
   format:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get install -y clang-format
