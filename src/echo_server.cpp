@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <system_error>
 
 namespace epoll {
 EchoServer::EchoServer(uint16_t port) : listener_(port) {
@@ -14,13 +15,21 @@ EchoServer::EchoServer(uint16_t port) : listener_(port) {
 }
 
 void EchoServer::run() {
-  while (true) {
-    TcpConnection conn = listener_.accept();
-    std::cout << "client connected (fd=" << conn.fd() << ")" << std::endl;
-    handle(conn);
-    std::cout << "client disconnected" << std::endl;
+  while (!stop_.load()) {
+    try {
+      TcpConnection conn = listener_.accept();
+      std::cout << "client connected (fd=" << conn.fd() << ")" << std::endl;
+      handle(conn);
+      std::cout << "client disconnected" << std::endl;
+    } catch (const std::system_error &e) {
+      if (stop_.load())
+        break;
+      throw;
+    }
   }
 }
+
+void EchoServer::stop() noexcept { stop_.store(true); }
 
 void EchoServer::handle(TcpConnection &conn) {
   std::array<std::byte, 4096> buf{};
