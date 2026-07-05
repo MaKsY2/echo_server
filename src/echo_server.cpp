@@ -2,6 +2,7 @@
 
 #include "tcp_connection.hpp"
 #include "tcp_listener.hpp"
+#include "utils/time_recorder.hpp"
 
 #include <array>
 #include <atomic>
@@ -56,13 +57,17 @@ void EchoServer::stop() {
 }
 
 void EchoServer::handle(TcpConnection conn) {
+  auto recorder = utils::LazyRecorder(1000000);
   std::array<std::byte, 4096> buf{};
   while (true) {
     size_t n = conn.read(buf);
     if (n == 0)
       return;
+    uint64_t t0 = utils::now_ns();
     conn.write_all({buf.data(), n});
+    recorder.record(utils::now_ns() - t0);
   }
+  recorder.report("server-side echo");
 }
 
 } // namespace epoll
