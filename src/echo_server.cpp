@@ -62,7 +62,7 @@ void EchoServer::handle(TcpConnection conn) {
   while (true) {
     size_t n = conn.read(buf);
     if (n == 0)
-      return;
+      break;
     uint64_t t0 = utils::now_ns();
     conn.write_all({buf.data(), n});
     recorder.record(utils::now_ns() - t0);

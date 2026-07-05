@@ -19,7 +19,7 @@ class LazyRecorder {
 
 public:
   explicit LazyRecorder(uint64_t buffer) : size_(0) {
-    samples_.reserve(buffer);
+    samples_.resize(buffer);
     std::fill(samples_.begin(), samples_.end(), 0);
   }
 
