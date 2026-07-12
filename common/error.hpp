@@ -3,6 +3,8 @@
 #include <cerrno>
 #include <system_error>
 
+namespace common {
 [[noreturn]] inline void throw_errno(const char *what) {
   throw std::system_error(errno, std::generic_category(), what);
 }
+} // namespace common

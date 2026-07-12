@@ -12,13 +12,13 @@ namespace epoll {
 TcpListener::TcpListener(uint16_t port, int backlog) {
   FileDescriptor sock{::socket(AF_INET, SOCK_STREAM, 0)};
   if (!sock.valid())
-    throw_errno("socket");
+    common::throw_errno("socket");
 
   int opt = 1;
 
   if (::setsockopt(sock.get(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) <
       0) {
-    throw_errno("setsockopt(SO_REUSEADDR)");
+    common::throw_errno("setsockopt(SO_REUSEADDR)");
   }
 
   sockaddr_in addr{};
@@ -28,10 +28,10 @@ TcpListener::TcpListener(uint16_t port, int backlog) {
 
   if (::bind(sock.get(), reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) <
       0) {
-    throw_errno("bind");
+    common::throw_errno("bind");
   }
   if (::listen(sock.get(), backlog) < 0) {
-    throw_errno("listen");
+    common::throw_errno("listen");
   }
   fd_ = std::move(sock);
 }
@@ -45,7 +45,7 @@ TcpConnection TcpListener::accept() {
       return TcpConnection{FileDescriptor{client}};
     if (errno == EINTR)
       continue;
-    throw_errno("accept");
+    common::throw_errno("accept");
   }
 }
 } // namespace epoll

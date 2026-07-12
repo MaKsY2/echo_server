@@ -15,7 +15,7 @@ TcpConnection::TcpConnection(FileDescriptor fd) : fd_(std::move(fd)) {}
       return static_cast<size_t>(n);
     if (errno == EINTR)
       continue;
-    throw_errno("read");
+    common::throw_errno("read");
   }
 }
 
@@ -27,7 +27,7 @@ void TcpConnection::write_all(std::span<const std::byte> data) {
     if (n < 0) {
       if (errno == EINTR)
         continue;
-      throw_errno("send");
+      common::throw_errno("send");
     }
     written += static_cast<size_t>(n);
   }

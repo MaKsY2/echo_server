@@ -6,7 +6,7 @@
 #include <ctime>
 #include <vector>
 
-namespace utils {
+namespace common {
 inline uint64_t now_ns() {
   timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
