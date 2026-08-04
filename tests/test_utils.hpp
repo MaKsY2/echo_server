@@ -12,7 +12,7 @@
 #include <thread>
 
 using namespace std::chrono_literals;
-using namespace epoll;
+using namespace echo;
 
 namespace tests {
 

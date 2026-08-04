@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <span>
 
-namespace epoll {
+namespace echo {
 
 class TcpConnection {
   FileDescriptor fd_;
@@ -16,4 +16,4 @@ public:
   [[nodiscard]] int fd() const noexcept;
   void write_all(std::span<const std::byte> data);
 };
-} // namespace epoll
+} // namespace echo

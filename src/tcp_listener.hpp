@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace epoll {
+namespace echo {
 class TcpConnection;
 
 class TcpListener {
@@ -14,4 +14,4 @@ public:
   TcpConnection accept();
   void shutdown() noexcept;
 };
-} // namespace epoll
+} // namespace echo

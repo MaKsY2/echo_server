@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-namespace epoll {
+namespace echo {
 TcpListener::TcpListener(uint16_t port, int backlog) {
   FileDescriptor sock{::socket(AF_INET, SOCK_STREAM, 0)};
   if (!sock.valid())
@@ -48,4 +48,4 @@ TcpConnection TcpListener::accept() {
     common::throw_errno("accept");
   }
 }
-} // namespace epoll
+} // namespace echo

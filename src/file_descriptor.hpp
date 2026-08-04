@@ -2,7 +2,7 @@
 
 #include <unistd.h>
 
-namespace epoll {
+namespace echo {
 class FileDescriptor {
   int fd_{-1};
 
@@ -19,4 +19,4 @@ public:
   [[nodiscard]] int get() const noexcept;
   [[nodiscard]] bool valid() const noexcept;
 };
-} // namespace epoll
+} // namespace echo

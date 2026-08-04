@@ -14,7 +14,7 @@
 #include <system_error>
 #include <thread>
 
-namespace epoll {
+namespace echo {
 EchoServer::EchoServer(uint16_t port) : listener_(port) {
   std::cout << "listening on :" << port << std::endl;
 }
@@ -70,4 +70,4 @@ void EchoServer::handle(TcpConnection conn) {
   recorder.report("server-side echo");
 }
 
-} // namespace epoll
+} // namespace echo

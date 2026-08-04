@@ -9,7 +9,7 @@
 #include <string>
 
 using namespace std::chrono_literals;
-using namespace epoll;
+using namespace echo;
 using namespace tests;
 
 TEST_F(ServerFixture, EchoesShortMessage) {

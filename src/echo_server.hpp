@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <mutex>
 
-namespace epoll {
+namespace echo {
 
 class TcpConnection;
 
@@ -25,4 +25,4 @@ public:
 private:
   static void handle(TcpConnection conn);
 };
-} // namespace epoll
+} // namespace echo

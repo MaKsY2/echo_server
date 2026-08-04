@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace epoll {
+namespace echo {
 FileDescriptor::FileDescriptor(int fd) noexcept : fd_(fd) {}
 
 FileDescriptor::~FileDescriptor() {
@@ -25,4 +25,4 @@ FileDescriptor &FileDescriptor::operator=(FileDescriptor &&other) noexcept {
 [[nodiscard]] int FileDescriptor::get() const noexcept { return fd_; }
 [[nodiscard]] bool FileDescriptor::valid() const noexcept { return fd_ >= 0; }
 
-} // namespace epoll
+} // namespace echo

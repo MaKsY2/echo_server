@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <utility>
 
-namespace epoll {
+namespace echo {
 TcpConnection::TcpConnection(FileDescriptor fd) : fd_(std::move(fd)) {}
 
 [[nodiscard]] size_t TcpConnection::read(std::span<std::byte> buf) {
@@ -34,4 +34,4 @@ void TcpConnection::write_all(std::span<const std::byte> data) {
 }
 
 [[nodiscard]] int TcpConnection::fd() const noexcept { return fd_.get(); }
-} // namespace epoll
+} // namespace echo
