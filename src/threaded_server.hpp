@@ -1,5 +1,6 @@
 #pragma once
 
+#include "server.hpp"
 #include "tcp_listener.hpp"
 #include <atomic>
 #include <condition_variable>
@@ -10,7 +11,7 @@ namespace echo {
 
 class TcpConnection;
 
-class EchoServer {
+class ThreadedServer : public Server {
   TcpListener listener_;
   std::atomic<bool> stop_{false};
   std::mutex mu_;
@@ -18,7 +19,7 @@ class EchoServer {
   std::size_t active_ = 0;
 
 public:
-  explicit EchoServer(uint16_t);
+  explicit ThreadedServer(uint16_t);
   void run();
   void stop();
 

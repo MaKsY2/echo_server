@@ -6,7 +6,6 @@
 #include <span>
 #include <stdexcept>
 #include <sys/socket.h>
-#include <system_error>
 #include <unistd.h>
 #include <vector>
 

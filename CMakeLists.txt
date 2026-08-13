@@ -21,7 +21,9 @@ target_include_directories(echo_common INTERFACE ${CMAKE_SOURCE_DIR}/common)
 
 
 add_library(echo_core STATIC
-    src/echo_server.cpp
+    src/threaded_server.cpp
+    src/uring_server.cpp
+    src/epoll_server.cpp
     src/epoll.cpp
     src/file_descriptor.cpp
     src/tcp_listener.cpp

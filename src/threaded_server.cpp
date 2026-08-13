@@ -1,4 +1,4 @@
-#include "echo_server.hpp"
+#include "threaded_server.hpp"
 
 #include "tcp_connection.hpp"
 #include "tcp_listener.hpp"
@@ -15,11 +15,11 @@
 #include <thread>
 
 namespace echo {
-EchoServer::EchoServer(uint16_t port) : listener_(port) {
+ThreadedServer::ThreadedServer(uint16_t port) : listener_(port) {
   std::cout << "listening on :" << port << std::endl;
 }
 
-void EchoServer::run() {
+void ThreadedServer::run() {
   while (!stop_.load(std::memory_order_relaxed)) {
     try {
       TcpConnection conn = listener_.accept();
@@ -49,14 +49,14 @@ void EchoServer::run() {
   }
 }
 
-void EchoServer::stop() {
+void ThreadedServer::stop() {
   stop_.store(true, std::memory_order_relaxed);
   listener_.shutdown();
   std::unique_lock lk(mu_);
   drained_.wait(lk, [this] { return active_ == 0; });
 }
 
-void EchoServer::handle(TcpConnection conn) {
+void ThreadedServer::handle(TcpConnection conn) {
   auto recorder = common::LazyRecorder(1000000);
   std::array<std::byte, 4096> buf{};
   while (true) {

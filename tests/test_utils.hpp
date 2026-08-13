@@ -1,5 +1,5 @@
 #pragma once
-#include "echo_server.hpp"
+#include "threaded_server.hpp"
 #include <gtest/gtest.h>
 
 #include <arpa/inet.h>
@@ -82,12 +82,12 @@ uint16_t pick_port() {
 class ServerFixture : public ::testing::Test {
 protected:
   uint16_t port_;
-  std::unique_ptr<EchoServer> server_;
+  std::unique_ptr<ThreadedServer> server_;
   std::thread thread_;
 
   void SetUp() override {
     port_ = pick_port();
-    server_ = std::make_unique<EchoServer>(port_);
+    server_ = std::make_unique<ThreadedServer>(port_);
     thread_ = std::thread([this] {
       try {
         server_->run();
