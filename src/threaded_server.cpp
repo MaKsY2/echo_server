@@ -8,6 +8,7 @@
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <mutex>
 #include <syncstream>
@@ -57,17 +58,28 @@ void ThreadedServer::stop() {
 }
 
 void ThreadedServer::handle(TcpConnection conn) {
-  auto recorder = common::LazyRecorder(1000000);
+  common::LazyRecorder rec_inbound(1000000);
+  common::LazyRecorder rec_service(1000000);
   std::array<std::byte, 4096> buf{};
+
   while (true) {
     size_t n = conn.read(buf);
     if (n == 0)
       break;
-    uint64_t t0 = common::now_ns();
+    uint64_t t_read = common::now_ns();
+    if (n >= sizeof(uint64_t)) {
+      uint64_t t0;
+      std::memcpy(&t0, buf.data(), sizeof(t0));
+
+      if (t0 < t_read && t_read - t0 < 2'000'000ULL) {
+        rec_inbound.record(t_read - t0);
+      }
+    }
     conn.write_all({buf.data(), n});
-    recorder.record(common::now_ns() - t0);
+    rec_service.record(common::now_ns() - t_read);
   }
-  recorder.report("server-side echo");
+  rec_inbound.report("server inbound (t0 -> read done)");
+  rec_service.report("server service (read done -> write done)");
 }
 
 } // namespace echo

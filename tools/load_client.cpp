@@ -104,14 +104,19 @@ int main(int argc, char **argv) {
       recv_all(fd, rx);
       const uint64_t t2 = common::now_ns();
 
-      if (i >= warmup)
+      if (i >= warmup) {
         rec.record(t2 - t_next);
-      rec.record(t0 - t_next);
-      rec.record(t1 - t0);
-      rec.record(t2 - t1);
+        sched.record(t0 - t_next);
+        send_rec.record(t1 - t0);
+        wait_rec.record(t2 - t1);
+      }
     }
 
-    rec.report("client RTT");
+    rec.report("total (from schedule)");
+    sched.report("sched_lag");
+    send_rec.report("send_syscall");
+    wait_rec.report("wait_for_echo");
+
     close(fd);
     return 0;
   } catch (const std::exception &err) {
