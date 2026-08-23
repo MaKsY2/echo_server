@@ -3,10 +3,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <format>
+#include <iostream>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <span>
 #include <stdexcept>
+#include <string>
+#include <string_view>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
@@ -81,14 +86,22 @@ int main(int argc, char **argv) {
     std::vector<std::byte> tx(cfg.msg_size, std::byte{0xAB});
     std::vector<std::byte> rx(cfg.msg_size);
     const uint64_t cap = total - warmup;
-    common::LazyRecorder rec(cap);
-    common::LazyRecorder sched(cap);
-    common::LazyRecorder send_rec(cap);
-    common::LazyRecorder wait_rec(cap);
 
-    printf(
-        "config: host=%s port=%u rate=%lu duration=%lus msg=%zu warmup=%lus\n",
-        cfg.host, cfg.port, cfg.rate, cfg.duration_s, cfg.msg_size,
+    const std::string run_id = common::make_run_id();
+    const std::filesystem::path raw_dir = "results/raw";
+    std::filesystem::create_directories(raw_dir);
+    auto dump = [&](std::string_view metric) {
+      return raw_dir / std::format("{}.{}.txt", run_id, metric);
+    };
+
+    common::LazyRecorder rec(cap, dump("total"));
+    common::LazyRecorder sched(cap, dump("sched_lag"));
+    common::LazyRecorder send_rec(cap, dump("send_syscall"));
+    common::LazyRecorder wait_rec(cap, dump("wait_for_echo"));
+
+    std::cout << std::format(
+        "run_id={} host={} port={} rate={} duration={}s msg={} warmup={}s\n",
+        run_id, cfg.host, cfg.port, cfg.rate, cfg.duration_s, cfg.msg_size,
         cfg.warmup_s);
 
     const uint64_t start = common::now_ns() + 1'000'000;

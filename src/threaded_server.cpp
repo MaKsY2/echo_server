@@ -58,8 +58,8 @@ void ThreadedServer::stop() {
 }
 
 void ThreadedServer::handle(TcpConnection conn) {
-  common::LazyRecorder rec_inbound(1000000);
-  common::LazyRecorder rec_service(1000000);
+  common::LazyRecorder rec_inbound(1000000, "inbound_server");
+  common::LazyRecorder rec_service(1000000, "service_server");
   std::array<std::byte, 4096> buf{};
 
   while (true) {

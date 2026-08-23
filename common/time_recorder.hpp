@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <ctime>
@@ -8,6 +9,8 @@
 #include <format>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <string_view>
 #include <syncstream>
 #include <vector>
 
@@ -21,9 +24,11 @@ inline uint64_t now_ns() {
 class LazyRecorder {
   std::vector<uint64_t> samples_;
   uint64_t size_;
+  std::filesystem::path dump_path_;
 
 public:
-  explicit LazyRecorder(uint64_t buffer) : size_(0) {
+  explicit LazyRecorder(uint64_t buffer, const std::filesystem::path &dump_path)
+      : size_(0), dump_path_(dump_path) {
     samples_.resize(buffer);
     std::fill(samples_.begin(), samples_.end(), 0);
   }
@@ -33,19 +38,15 @@ public:
     if (size_ < samples_.size()) {
       samples_[size_++] = ns;
     }
-
-    // пох ну эксепт и эксепт, че падать то...
   }
 
-  void report(std::string_view label,
-              const std::filesystem::path &dump_path = {}) {
+  void report(std::string_view label) {
     if (size_ == 0) {
       std::cout << std::format("{}: no samples\n", label);
       return;
     }
 
-    if (!dump_path.empty())
-      report_raw(dump_path);
+    report_raw();
 
     std::sort(samples_.begin(), samples_.begin() + size_);
     auto pct = [&](double p) { return samples_[size_t(p * (size_ - 1))]; };
@@ -58,10 +59,10 @@ public:
   }
 
 private:
-  void report_raw(const std::filesystem::path &path) const {
-    std::ofstream out(path);
+  void report_raw() const {
+    std::ofstream out(dump_path_);
     if (!out) {
-      std::cerr << "cant open: " << path << '\n';
+      std::cerr << "cant open: " << dump_path_ << '\n';
       return;
     }
 
@@ -70,5 +71,11 @@ private:
     }
   }
 };
+
+inline std::string make_run_id() {
+  using namespace std::chrono;
+  const zoned_time zt{current_zone(), floor<seconds>(system_clock::now())};
+  return std::format("{:%Y%m%d_%H%M%S}", zt);
+}
 
 } // namespace common
