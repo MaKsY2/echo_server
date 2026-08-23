@@ -4,6 +4,11 @@
 #include <cstdint>
 #include <cstdio>
 #include <ctime>
+#include <filesystem>
+#include <format>
+#include <fstream>
+#include <iostream>
+#include <syncstream>
 #include <vector>
 
 namespace common {
@@ -32,19 +37,38 @@ public:
     // пох ну эксепт и эксепт, че падать то...
   }
 
-  void report(const char *label) {
+  void report(std::string_view label,
+              const std::filesystem::path &dump_path = {}) {
     if (size_ == 0) {
-      printf("%s: no samples\n", label);
+      std::cout << std::format("{}: no samples\n", label);
       return;
     }
+
+    if (!dump_path.empty())
+      report_raw(dump_path);
+
     std::sort(samples_.begin(), samples_.begin() + size_);
     auto pct = [&](double p) { return samples_[size_t(p * (size_ - 1))]; };
-    printf("%s (%zu samples), ns:\n", label, size_);
-    printf("  p50    = %lu\n", pct(0.50));
-    printf("  p99    = %lu\n", pct(0.99));
-    printf("  p99.9  = %lu\n", pct(0.999));
-    printf("  max    = %lu\n", samples_[size_ - 1]);
+
+    std::osyncstream(std::cout)
+        << std::format("{} ({} samples), ns:\n  p50    = {}\n  p99    = {}\n"
+                       "  p99.9  = {}\n  p99.99 = {}\n  max    = {}\n",
+                       label, size_, pct(0.50), pct(0.99), pct(0.999),
+                       pct(0.9999), samples_[size_ - 1]);
+  }
+
+private:
+  void report_raw(const std::filesystem::path &path) const {
+    std::ofstream out(path);
+    if (!out) {
+      std::cerr << "cant open: " << path << '\n';
+      return;
+    }
+
+    for (uint64_t i = 0; i < size_; ++i) {
+      out << samples_[i] << '\n';
+    }
   }
 };
 
-} // namespace utils
+} // namespace common
