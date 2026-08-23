@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <netinet/in.h>
@@ -78,7 +79,11 @@ int main(int argc, char **argv) {
 
     std::vector<std::byte> tx(cfg.msg_size, std::byte{0xAB});
     std::vector<std::byte> rx(cfg.msg_size);
-    common::LazyRecorder rec(total - warmup);
+    const uint64_t cap = total - warmup;
+    common::LazyRecorder rec(cap);
+    common::LazyRecorder sched(cap);
+    common::LazyRecorder send_rec(cap);
+    common::LazyRecorder wait_rec(cap);
 
     printf(
         "config: host=%s port=%u rate=%lu duration=%lus msg=%zu warmup=%lus\n",
@@ -93,11 +98,17 @@ int main(int argc, char **argv) {
       while (common::now_ns() < t_next) {
       }
 
+      const uint64_t t0 = common::now_ns();
       send_all(fd, tx);
+      const uint64_t t1 = common::now_ns();
       recv_all(fd, rx);
+      const uint64_t t2 = common::now_ns();
 
       if (i >= warmup)
-        rec.record(common::now_ns() - t_next);
+        rec.record(t2 - t_next);
+      rec.record(t0 - t_next);
+      rec.record(t1 - t0);
+      rec.record(t2 - t1);
     }
 
     rec.report("client RTT");

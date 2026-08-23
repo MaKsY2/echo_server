@@ -2,11 +2,16 @@
 #include "error.hpp"
 
 #include <cerrno>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <utility>
 
 namespace echo {
-TcpConnection::TcpConnection(FileDescriptor fd) : fd_(std::move(fd)) {}
+TcpConnection::TcpConnection(FileDescriptor fd) : fd_(std::move(fd)) {
+  int one = 1;
+  ::setsockopt(fd_.get(), IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+}
 
 [[nodiscard]] size_t TcpConnection::read(std::span<std::byte> buf) {
   while (true) {
