@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <span>
@@ -99,6 +100,7 @@ int main(int argc, char **argv) {
       }
 
       const uint64_t t0 = common::now_ns();
+      std::memcpy(tx.data(), &t0, sizeof(t0));
       send_all(fd, tx);
       const uint64_t t1 = common::now_ns();
       recv_all(fd, rx);
